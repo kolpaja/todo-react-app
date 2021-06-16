@@ -13,8 +13,18 @@ function App() {
     //when the app loads we listen to the database and fetch new todos as they get added
     useEffect(() => {
         db.collection("todos").orderBy("timestamp", "desc").onSnapshot(snapshot => {
-            console.log("data: ", snapshot.docs.map(doc => doc.data())); //doc.data send an array of objects [{...}]
-            setTodos(snapshot.docs.map(doc => doc.data().todo)) //we have an array of [...todo]
+            console.log("snapshot: ", snapshot.docs.map(doc => doc.data())); //doc.data send an array of objects [{...}]
+
+            const convertedData = snapshot.docs.map(doc => {
+                const { todo } = doc.data()
+                const id = doc.id
+                return {
+                    id,
+                    todo,
+                }
+            })
+            console.log("converted: ", convertedData)
+            setTodos(convertedData)
         })
     }, [])
 
@@ -27,7 +37,7 @@ function App() {
         else {
             db.collection("todos").add({
                 todo: input,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             })
             setInput("") //clear the input after we add todos
         }
@@ -46,9 +56,7 @@ function App() {
                 <ul>
                     {
                         todos.map(todo => (
-                            <Todo todo={todo}>
-
-                            </Todo>
+                            <Todo todo={todo} />
                         ))
                     }
                 </ul>

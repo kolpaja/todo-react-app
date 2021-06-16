@@ -1,11 +1,18 @@
 import React from 'react'
-import { ListItem, List, ListItemText } from '@material-ui/core'
+
+import { db } from "./firebase"
+import { ListItem, List, ListItemText, Button } from '@material-ui/core'
 
 function Todo(props) {
+    const deleteTodo = (event) => {
+        console.log("delete fnx: ", props.todo.id)
+        db.collection("todos").doc(props.todo.id).delete()
+    }
     return (
         <List>
             <ListItem>
-                <ListItemText primary={props.todo} secondary={"dummy deadline ⏰"} />
+                <ListItemText primary={props.todo.todo} secondary={"dummy deadline ⏰"} />
+                <Button onClick={deleteTodo}>❌ Delete</Button>
             </ListItem>
         </List>
 
